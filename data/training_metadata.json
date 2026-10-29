@@ -1,0 +1,20 @@
+{
+  "model_version": "2.0.0-review3",
+  "training_documents": 96,
+  "concept_clusters": [
+    "machine_learning",
+    "rest_api",
+    "sql_databases",
+    "devops_cicd",
+    "containerization",
+    "frontend_react",
+    "data_analytics",
+    "cloud_infrastructure",
+    "cybersecurity",
+    "testing_qa",
+    "authentication_security",
+    "java_enterprise"
+  ],
+  "vector_dimensions": 60,
+  "vocabulary_size": 1940
+}

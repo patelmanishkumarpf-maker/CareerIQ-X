@@ -1,0 +1,11 @@
+
+.venv/
+__pycache__/
+*.py[cod]
+.DS_Store
+.env
+*.db-shm
+*.db-wal
+careeriq.db
+careeriq.db-shm
+careeriq.db-wal

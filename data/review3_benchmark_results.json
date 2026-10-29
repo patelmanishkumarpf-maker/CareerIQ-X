@@ -1,0 +1,54 @@
+[
+  {
+    "category": "Semantic Equivalence (ML)",
+    "description": "Candidate describes 'predictive models from historical data' vs Job asking for 'machine learning model development'",
+    "resume_text": "Experienced developing predictive models from historical data using Python algorithms and statistical techniques.",
+    "job_text": "We are seeking a Machine Learning Engineer to handle model development, statistical prediction, and data science.",
+    "expected": "High Semantic Similarity (> 70%)",
+    "semantic_similarity": 0.6455,
+    "semantic_percentage": 64.6,
+    "matched_concepts": [
+      {
+        "concept": "Machine Learning",
+        "resume_affinity": 45.2,
+        "job_requirement": 58.9
+      }
+    ]
+  },
+  {
+    "category": "Semantic Equivalence (DevOps/CI-CD)",
+    "description": "Candidate describes 'automated deployments with GitHub Actions & containerization' vs Job asking for 'CI/CD pipeline with Docker'",
+    "resume_text": "Configured automated deployments with GitHub Actions and containerization on Linux cloud hosts.",
+    "job_text": "Looking for DevOps experience building continuous integration CI/CD pipelines and Docker containers.",
+    "expected": "High Semantic Similarity (> 70%)",
+    "semantic_similarity": 0.5443,
+    "semantic_percentage": 54.4,
+    "matched_concepts": [
+      {
+        "concept": "Devops Cicd",
+        "resume_affinity": 65.0,
+        "job_requirement": 33.8
+      }
+    ]
+  },
+  {
+    "category": "False Friends / Technology Distinction",
+    "description": "JavaScript Frontend developer applying to Java Enterprise Spring Boot role",
+    "resume_text": "React frontend developer skilled in JavaScript, HTML5, CSS responsive UI components, and state management.",
+    "job_text": "Java backend developer with Spring Boot, Hibernate JPA, object-oriented design, and enterprise microservices.",
+    "expected": "Low Semantic Similarity (< 35%)",
+    "semantic_similarity": 0.0788,
+    "semantic_percentage": 7.9,
+    "matched_concepts": []
+  },
+  {
+    "category": "Cross-Domain Non-Overlap",
+    "description": "Business Intelligence / Dashboard analyst applying to Network Security Analyst role",
+    "resume_text": "Designed executive KPI dashboards and financial revenue reports in Microsoft Power BI and Excel.",
+    "job_text": "Cybersecurity Analyst: Monitor SIEM network logs, conduct penetration testing, and respond to security intrusions.",
+    "expected": "Very Low Semantic Similarity (< 15%)",
+    "semantic_similarity": 0.063,
+    "semantic_percentage": 6.3,
+    "matched_concepts": []
+  }
+]

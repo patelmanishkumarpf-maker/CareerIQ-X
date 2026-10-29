@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Semantic Equivalence (ML)",
+    "text_a": "Developed predictive models from historical data using Python and algorithms",
+    "text_b": "Machine learning model development and statistical modeling in Python",
+    "similarity": 0.216256821518021,
+    "similarity_percent": 21.6,
+    "note": "Expected: HIGH semantic similarity despite different phrasing"
+  },
+  {
+    "name": "Semantic Equivalence (DevOps)",
+    "text_a": "Configured automated deployments with GitHub Actions and containerization",
+    "text_b": "Built continuous integration CI/CD pipelines using Docker on Linux",
+    "similarity": 0.8698446320644777,
+    "similarity_percent": 87.0,
+    "note": "Expected: HIGH semantic similarity"
+  },
+  {
+    "name": "False Friends / Distinction (Java vs JS)",
+    "text_a": "Built web frontends using JavaScript React and HTML styling",
+    "text_b": "Enterprise backend development in Java with Spring Boot and Hibernate",
+    "similarity": 0.19515605029421065,
+    "similarity_percent": 19.5,
+    "note": "Expected: MODERATE-TO-LOW similarity (identifies technology divergence)"
+  },
+  {
+    "name": "Unrelated Domains",
+    "text_a": "Designed executive financial dashboards and revenue reports in Power BI",
+    "text_b": "Linux kernel security, network penetration testing, and firewall rules",
+    "similarity": 0.02515140596902051,
+    "similarity_percent": 2.5,
+    "note": "Expected: VERY LOW similarity"
+  }
+]

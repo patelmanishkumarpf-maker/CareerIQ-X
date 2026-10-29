@@ -1,0 +1,2205 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CareerIQ X — Career Operating System (Review 3)</title>
+  <style>
+    :root {
+      --navy: #0e172a;
+      --blue: #2563eb;
+      --blue-light: #3b82f6;
+      --blue-subtle: #eff6ff;
+      --indigo: #4f46e5;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --bg: #f8fafc;
+      --white: #ffffff;
+      --green: #10b981;
+      --green-subtle: #ecfdf5;
+      --amber: #f59e0b;
+      --amber-subtle: #fffbeb;
+      --purple: #8b5cf6;
+      --purple-subtle: #f5f3ff;
+      --red: #ef4444;
+      --red-subtle: #fef2f2;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      font: 14.5px/1.55 Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
+    }
+    button, input, textarea, select { font: inherit; }
+    button {
+      cursor: pointer;
+      border: 0;
+      border-radius: 9px;
+      padding: 9px 15px;
+      background: var(--blue);
+      color: white;
+      font-weight: 600;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    button:hover { opacity: 0.93; transform: translateY(-1px); }
+    button.secondary { background: #e0e7ff; color: #3730a3; }
+    button.ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+    button.ghost:hover { background: #f1f5f9; color: var(--ink); }
+    button.danger { background: var(--red-subtle); color: #b91c1c; border: 1px solid #fecaca; }
+    button.success { background: var(--green-subtle); color: #047857; border: 1px solid #a7f3d0; }
+    button.small { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
+    .hidden { display: none !important; }
+
+    /* Auth Screens */
+    .auth-wrap { min-height: 100vh; display: grid; grid-template-columns: 1.1fr 1fr; }
+    .hero {
+      background: linear-gradient(135deg, #090e1c 0%, #152449 60%, #1d356f 100%);
+      color: white;
+      padding: 7vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero:after {
+      content: "";
+      position: absolute;
+      width: 520px;
+      height: 520px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50%;
+      right: -140px;
+      bottom: -150px;
+      box-shadow: 0 0 0 45px rgba(255,255,255,0.03), 0 0 0 95px rgba(255,255,255,0.02);
+    }
+    .brand { font-size: 24px; font-weight: 850; letter-spacing: 0.3px; }
+    .brand span { color: #60a5fa; }
+    .hero h1 {
+      font-size: clamp(34px, 3.8vw, 54px);
+      line-height: 1.1;
+      letter-spacing: -1.2px;
+      margin: 32px 0 18px;
+    }
+    .hero p { color: #cbd5e1; max-width: 520px; font-size: 16.5px; }
+    .hero-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+    .hero-badge {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(8px);
+      padding: 6px 14px;
+      border-radius: 99px;
+      font-size: 13px;
+      border: 1px solid rgba(255,255,255,0.16);
+    }
+    .auth-panel { display: flex; align-items: center; justify-content: center; padding: 32px; }
+    .auth-card {
+      background: white;
+      border: 1px solid var(--line);
+      box-shadow: 0 20px 60px rgba(15,23,42,0.06);
+      border-radius: 20px;
+      padding: 36px;
+      width: min(440px, 100%);
+    }
+    .field { display: grid; gap: 6px; margin: 14px 0; }
+    .field label { font-size: 12.5px; font-weight: 700; color: #475569; }
+    .field input, .field textarea, .field select {
+      border: 1px solid #cbd5e1;
+      border-radius: 9px;
+      padding: 10px 12px;
+      background: #fff;
+      outline: none;
+      width: 100%;
+      color: var(--ink);
+    }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+    }
+    .field textarea { min-height: 85px; resize: vertical; }
+
+    /* Layout Shell */
+    .app-shell { display: grid; grid-template-columns: 245px 1fr; min-height: 100vh; }
+    .sidebar {
+      background: #090e1c;
+      color: #cbd5e1;
+      padding: 22px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    .sidebar .brand { padding: 0 10px; }
+    .side-label {
+      text-transform: uppercase;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      color: #64748b;
+      padding: 8px 10px 4px;
+      font-weight: 700;
+    }
+    .nav { display: grid; gap: 3px; }
+    .nav button {
+      background: transparent;
+      color: #94a3b8;
+      text-align: left;
+      font-weight: 550;
+      padding: 9px 14px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13.5px;
+      border: 1px solid transparent;
+      width: 100%;
+      letter-spacing: -0.1px;
+    }
+    .nav button:hover { background: #162036; color: white; }
+    .nav button.active {
+      background: #1e293b;
+      color: #60a5fa;
+      font-weight: 650;
+      border-color: rgba(96,165,250,0.25);
+    }
+    .nav .badge-mini {
+      font-size: 10px;
+      background: #2563eb;
+      color: white;
+      padding: 2px 7px;
+      border-radius: 99px;
+      font-weight: 700;
+    }
+    .side-bottom {
+      margin-top: auto;
+      padding: 14px 10px 0;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      font-size: 13px;
+    }
+
+    /* Content & Components */
+    .main { min-width: 0; }
+    .topbar {
+      height: 70px;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .topbar h2 { font-size: 17.5px; margin: 0; font-weight: 750; }
+    .user-chip { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+    .avatar {
+      width: 35px;
+      height: 35px;
+      border-radius: 10px;
+      background: #e0e7ff;
+      color: #3730a3;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+    }
+    .content { padding: 28px 32px 50px; max-width: 1400px; margin: auto; }
+    .page-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+    .page-title h1 { font-size: 26px; letter-spacing: -0.6px; margin: 0 0 4px; font-weight: 800; }
+    .page-title p { margin: 0; color: var(--muted); font-size: 14.5px; }
+
+    /* Cards & Grids */
+    .grid { display: grid; gap: 18px; }
+    .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 20px; }
+    .two { grid-template-columns: 1.25fr 0.75fr; }
+    .two-equal { grid-template-columns: 1fr 1fr; }
+    .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 4px 16px rgba(15,23,42,0.03);
+    }
+    .card h3 { margin: 0 0 12px; font-size: 16px; font-weight: 750; }
+    .stat-label { color: var(--muted); font-size: 12.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-value { font-size: 30px; font-weight: 850; letter-spacing: -1px; margin: 4px 0 2px; }
+    .stat-foot { font-size: 12px; color: #059669; font-weight: 550; }
+
+    .progress {
+      height: 8px;
+      background: #f1f5f9;
+      border-radius: 99px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+    .progress span {
+      height: 100%;
+      display: block;
+      background: linear-gradient(90deg, #2563eb, #60a5fa);
+      border-radius: 99px;
+      transition: width 0.4s ease;
+    }
+    .progress.green span { background: linear-gradient(90deg, #059669, #34d399); }
+    .progress.purple span { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 99px;
+      background: var(--blue-subtle);
+      color: #1d4ed8;
+      font-size: 11.5px;
+      font-weight: 700;
+      border: 1px solid #dbeafe;
+    }
+    .pill.green { background: var(--green-subtle); color: #065f46; border-color: #a7f3d0; }
+    .pill.amber { background: var(--amber-subtle); color: #92400e; border-color: #fde68a; }
+    .pill.purple { background: var(--purple-subtle); color: #5b21b6; border-color: #ddd6fe; }
+    .pill.muted { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
+
+    .tag-list { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag {
+      padding: 4px 9px;
+      border-radius: 7px;
+      background: #eff6ff;
+      color: #1e40af;
+      font-size: 12px;
+      font-weight: 550;
+      border: 1px solid #dbeafe;
+    }
+    .tag.missing { background: #fff7ed; color: #9a3412; border-color: #fed7aa; }
+    .tag.verified { background: #ecfdf5; color: #065f46; border-color: #a7f3d0; }
+
+    .notice {
+      padding: 13px 16px;
+      background: #eff6ff;
+      color: #1e3a8a;
+      border-radius: 11px;
+      font-size: 13px;
+      margin: 14px 0;
+      border: 1px solid #bfdbfe;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .notice.warning { background: #fffbeb; color: #92400e; border-color: #fde68a; }
+
+    /* Tables */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    th, td { text-align: left; padding: 13px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+    th { font-size: 11.5px; color: #64748b; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 700; }
+    td strong { font-size: 14px; }
+    .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    /* Tabs Bar */
+    .tabs-bar {
+      display: flex;
+      gap: 6px;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 11px;
+      margin-bottom: 20px;
+      width: fit-content;
+    }
+    .tab-btn {
+      background: transparent;
+      color: #64748b;
+      font-weight: 650;
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+    .tab-btn.active {
+      background: white;
+      color: var(--blue);
+      box-shadow: 0 2px 6px rgba(15,23,42,0.06);
+    }
+
+    /* Agent Chat */
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      height: 600px;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .chat-messages {
+      flex: 1;
+      padding: 22px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .chat-msg {
+      max-width: 80%;
+      padding: 13px 17px;
+      border-radius: 14px;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+    .chat-msg.user {
+      align-self: flex-end;
+      background: #2563eb;
+      color: white;
+      border-bottom-right-radius: 3px;
+    }
+    .chat-msg.agent {
+      align-self: flex-start;
+      background: #f8fafc;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-bottom-left-radius: 3px;
+    }
+    .chat-input-bar {
+      padding: 14px 18px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      gap: 10px;
+      background: white;
+    }
+    .prompt-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      padding: 10px 18px 0;
+      background: white;
+    }
+    .chip {
+      background: #f1f5f9;
+      color: #334155;
+      padding: 6px 12px;
+      border-radius: 99px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 550;
+      transition: all 0.15s;
+    }
+    .chip:hover { background: #e2e8f0; color: #0f172a; }
+
+    /* Interactive Graph Styles */
+    .graph-canvas-box {
+      background: #090e1a;
+      border-radius: 16px;
+      padding: 20px;
+      color: white;
+      min-height: 480px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Skills Passport */
+    .gauge-circle {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      margin: auto;
+      position: relative;
+    }
+
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      background: #0f172a;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+      z-index: 999;
+      font-size: 13.5px;
+      max-width: 380px;
+    }
+    .mobile-menu { display: none; }
+
+    @media (max-width: 1050px) {
+      .app-shell { grid-template-columns: 205px 1fr; }
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .two, .two-equal { grid-template-columns: 1fr; }
+      .content { padding: 20px; }
+    }
+    @media (max-width: 720px) {
+      .auth-wrap { grid-template-columns: 1fr; }
+      .hero { display: none; }
+      .app-shell { grid-template-columns: 1fr; }
+      .sidebar {
+        display: none;
+        position: fixed;
+        z-index: 40;
+        inset: 0 auto 0 0;
+        width: 250px;
+      }
+      .sidebar.open { display: flex; }
+      .mobile-menu { display: inline-flex; }
+      .topbar { padding: 0 16px; height: 62px; }
+      .content { padding: 16px 14px; }
+      .stats, .three { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- AUTH SECTION -->
+<section id="auth" class="auth-wrap">
+  <div class="hero">
+    <div class="brand">CareerIQ <span>X</span></div>
+    <h1>Your career.<br>With semantic intelligence.</h1>
+    <p>A career operating system featuring Review 3 NLP semantic matching, evidence-based skills passports, AI agent co-pilot, and dependency graph analytics.</p>
+    <div class="hero-badges">
+      <div class="hero-badge">NLP Vector Embeddings</div>
+      <div class="hero-badge">Career AI Co-pilot</div>
+      <div class="hero-badge">Skill Dependency Graph</div>
+      <div class="hero-badge">Verified Skills Passport</div>
+    </div>
+  </div>
+  <div class="auth-panel">
+    <div class="auth-card">
+      <div class="brand" style="color:#0f172a; margin-bottom: 20px;">CareerIQ <span>X</span></div>
+      
+      <!-- Login -->
+      <div id="loginForm">
+        <h2 style="margin: 0 0 4px; font-size: 25px;">Welcome back</h2>
+        <p style="color: var(--muted); margin: 0 0 16px;">Sign in to your career workspace.</p>
+        <div class="field">
+          <label>Email address</label>
+          <input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input id="loginPassword" type="password" placeholder="At least 8 characters" autocomplete="current-password">
+        </div>
+        <button style="width: 100%; margin-top: 10px;" onclick="login()">Sign in →</button>
+        <p style="text-align: center; margin-top: 16px; font-size: 13.5px;">
+          New to CareerIQ X? <span style="color: var(--blue); font-weight: 700; cursor: pointer;" onclick="toggleAuth(true)">Create account</span>
+        </p>
+      </div>
+
+      <!-- Register -->
+      <div id="registerForm" class="hidden">
+        <h2 style="margin: 0 0 4px; font-size: 25px;">Create your account</h2>
+        <p style="color: var(--muted); margin: 0 0 16px;">Build your Career Digital Twin.</p>
+        <div class="field">
+          <label>Full name</label>
+          <input id="regName" placeholder="Your name" autocomplete="name">
+        </div>
+        <div class="field">
+          <label>Email address</label>
+          <input id="regEmail" type="email" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input id="regPassword" type="password" placeholder="At least 8 characters" autocomplete="new-password">
+        </div>
+        <button style="width: 100%; margin-top: 10px;" onclick="register()">Create account →</button>
+        <p style="text-align: center; margin-top: 16px; font-size: 13.5px;">
+          Already have an account? <span style="color: var(--blue); font-weight: 700; cursor: pointer;" onclick="toggleAuth(false)">Sign in</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN APP SHELL -->
+<div id="app" class="app-shell hidden">
+  <aside id="sidebar" class="sidebar">
+    <div class="brand">CareerIQ <span>X</span></div>
+    
+    <div class="side-label">Workspace</div>
+    <nav class="nav">
+      <button data-page="dashboard" class="active" onclick="go('dashboard')">
+        <span>Overview</span>
+      </button>
+      <button data-page="profile" onclick="go('profile')">
+        <span>Career Twin</span>
+      </button>
+      <button data-page="analysis" onclick="go('analysis')">
+        <span>Skill Gap & Roadmap</span>
+      </button>
+      <button data-page="jobs" onclick="go('jobs')">
+        <span>Opportunities & NLP</span>
+        <span class="badge-mini">R3</span>
+      </button>
+      <button data-page="agent" onclick="go('agent')">
+        <span>Career AI Agent</span>
+        <span class="badge-mini">AI</span>
+      </button>
+      <button data-page="graph" onclick="go('graph')">
+        <span>Skill Graph</span>
+        <span class="badge-mini">New</span>
+      </button>
+      <button data-page="passport" onclick="go('passport')">
+        <span>Skills Passport</span>
+        <span class="badge-mini">Verify</span>
+      </button>
+      <button data-page="projects" onclick="go('projects')">
+        <span>Projects & Proof</span>
+      </button>
+      <button data-page="applications" onclick="go('applications')">
+        <span>Applications</span>
+      </button>
+      <button data-page="interview" onclick="go('interview')">
+        <span>Interview Studio</span>
+      </button>
+      <button data-page="privacy" onclick="go('privacy')">
+        <span>Privacy & Security</span>
+      </button>
+    </nav>
+
+    <div class="side-bottom">
+      <div id="sideName" style="font-weight: 750; color: white;">Candidate</div>
+      <div class="small" style="color: #94a3b8; margin: 3px 0 12px; font-size: 12px;">Review 3 Active</div>
+      <button class="ghost" style="width: 100%; border-color: rgba(255,255,255,0.15); color: #cbd5e1;" onclick="logout()">
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button class="ghost mobile-menu" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+        <h2 id="topTitle">Overview</h2>
+      </div>
+      <div class="user-chip">
+        <div class="avatar" id="avatar">C</div>
+        <div>
+          <div id="topName" style="font-weight: 750; color: var(--ink);">Candidate</div>
+          <div id="topEmail" style="font-size: 12px; color: var(--muted);">workspace</div>
+        </div>
+      </div>
+    </header>
+    
+    <div id="content" class="content"></div>
+  </main>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script>
+let user = null;
+let sessionToken = null;
+let page = "dashboard";
+let roles = [];
+let analysisData = null;
+let jobsWeightSemantic = 0.5;
+let jobsWeightKeyword = 0.5;
+let currentJobsTab = "feed"; // 'feed', 'custom', 'benchmarks'
+
+const titles = {
+  dashboard: "Workspace Overview",
+  profile: "Career Digital Twin",
+  analysis: "Skill Gap & Learning Roadmap",
+  jobs: "Opportunity Discovery & NLP Semantic Matching",
+  agent: "Personal Career AI Agent",
+  graph: "Skill Dependency Graph & Bottleneck Analysis",
+  passport: "Evidence-Based Skills Passport",
+  projects: "Project Portfolio Evidence",
+  applications: "Application Pipeline Tracker",
+  interview: "Interview Studio (STAR Rubric)",
+  privacy: "Privacy Controls & Security"
+};
+
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+function toast(msg) {
+  let t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.remove('hidden');
+  setTimeout(() => t.classList.add('hidden'), 3500);
+}
+
+async function api(path, opts = {}) {
+  opts.headers = opts.headers || {};
+  if (sessionToken) {
+    opts.headers['Authorization'] = 'Bearer ' + sessionToken;
+    opts.headers['X-Session-Token'] = sessionToken;
+  }
+  if (user) {
+    opts.headers['X-User-Id'] = user.user_id;
+  }
+  if (opts.body && !(opts.body instanceof FormData)) {
+    opts.headers['Content-Type'] = 'application/json';
+  }
+  let res = await fetch(path, opts);
+  let data = await res.json().catch(() => ({ detail: "Unexpected server response" }));
+  if (!res.ok) throw new Error(data.detail || "Request failed");
+  return data;
+}
+
+function toggleAuth(isReg) {
+  document.getElementById('loginForm').classList.toggle('hidden', isReg);
+  document.getElementById('registerForm').classList.toggle('hidden', !isReg);
+}
+
+async function login() {
+  try {
+    let d = await api('/api/login', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: document.getElementById('loginEmail').value,
+        password: document.getElementById('loginPassword').value
+      })
+    });
+    user = d;
+    sessionToken = d.session_token;
+    localStorage.setItem('careeriq_token', sessionToken);
+    enter();
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+async function register() {
+  try {
+    let d = await api('/api/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: document.getElementById('regName').value,
+        email: document.getElementById('regEmail').value,
+        password: document.getElementById('regPassword').value
+      })
+    });
+    user = d;
+    sessionToken = d.session_token;
+    localStorage.setItem('careeriq_token', sessionToken);
+    enter();
+    toast('Account created! Welcome to CareerIQ X.');
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+async function logout() {
+  try { await api('/api/logout', { method: 'POST' }); } catch(e){}
+  user = null;
+  sessionToken = null;
+  localStorage.removeItem('careeriq_token');
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('auth').classList.remove('hidden');
+}
+
+async function enter() {
+  document.getElementById('auth').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('topName').textContent = user.name;
+  document.getElementById('sideName').textContent = user.name;
+  document.getElementById('topEmail').textContent = user.email;
+  document.getElementById('avatar').textContent = (user.name || 'C').charAt(0).toUpperCase();
+  try {
+    let r = await api('/api/roles');
+    roles = r.roles;
+    go('dashboard');
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+// Auto-login if session token saved
+window.onload = async () => {
+  let saved = localStorage.getItem('careeriq_token');
+  if (saved) {
+    sessionToken = saved;
+    try {
+      let me = await api('/api/me');
+      user = { user_id: me.user.id, name: me.user.name, email: me.user.email };
+      enter();
+    } catch (e) {
+      localStorage.removeItem('careeriq_token');
+      sessionToken = null;
+    }
+  }
+};
+
+function go(p) {
+  page = p;
+  document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('active', b.dataset.page === p));
+  document.getElementById('topTitle').textContent = titles[p] || "CareerIQ X";
+  document.getElementById('sidebar').classList.remove('open');
+  renderPage().catch(e => toast(e.message));
+}
+
+function val(id) {
+  return document.getElementById(id)?.value || '';
+}
+
+async function renderPage() {
+  let c = document.getElementById('content');
+  c.innerHTML = '<div class="card" style="text-align:center; padding: 40px; color: var(--muted);">Loading workspace...</div>';
+  if (page === 'dashboard') return renderDashboard(c);
+  if (page === 'profile') return renderProfile(c);
+  if (page === 'analysis') return renderAnalysis(c);
+  if (page === 'jobs') return renderJobs(c);
+  if (page === 'agent') return renderAgent(c);
+  if (page === 'graph') return renderGraph(c);
+  if (page === 'passport') return renderPassport(c);
+  if (page === 'projects') return renderProjects(c);
+  if (page === 'applications') return renderApplications(c);
+  if (page === 'interview') return renderInterview(c);
+  if (page === 'privacy') return renderPrivacy(c);
+}
+
+/* ================= 1. DASHBOARD ================= */
+async function renderDashboard(c) {
+  let d = await api('/api/dashboard');
+  let a = await api('/api/analysis');
+  analysisData = a;
+
+  let bSkill = d.highest_leverage_skill;
+
+  c.innerHTML = `
+    <div class="page-title">
+      <div>
+        <h1>Welcome, ${esc(user.name.split(' ')[0])}</h1>
+        <p>Review 3 Enhanced Edition — NLP embeddings, evidence passport, and AI co-pilot.</p>
+      </div>
+      <button onclick="go('agent')">Open AI Career Co-pilot</button>
+    </div>
+
+    <div class="grid stats">
+      <div class="card">
+        <div class="stat-label">Recognized Skills</div>
+        <div class="stat-value">${d.skill_count}</div>
+        <div class="stat-foot">From profile & resume</div>
+      </div>
+      <div class="card">
+        <div class="stat-label">Semantic Role Fit</div>
+        <div class="stat-value">${a.semantic_similarity_percent}%</div>
+        <div class="progress green"><span style="width:${a.semantic_similarity_percent}%"></span></div>
+        <div style="font-size:12px;color:var(--muted)">NLP text embeddings cosine similarity</div>
+      </div>
+      <div class="card">
+        <div class="stat-label">Passport Trust Index</div>
+        <div class="stat-value">${d.passport_trust_index}%</div>
+        <div class="progress purple"><span style="width:${d.passport_trust_index}%"></span></div>
+        <div style="font-size:12px;color:var(--muted)">Evidence-verified credentials</div>
+      </div>
+      <div class="card">
+        <div class="stat-label">Projects & Proof</div>
+        <div class="stat-value">${d.projects}</div>
+        <div class="stat-foot">${d.applications} apps · ${d.interviews} mock interviews</div>
+      </div>
+    </div>
+
+    <!-- Bottleneck Alert Banner -->
+    ${bSkill ? `
+      <div class="notice" style="background:#f5f3ff; border-color:#ddd6fe; color:#5b21b6; justify-content:space-between; flex-wrap:wrap;">
+        <div>
+          <strong>Highest-Leverage Missing Skill: ${esc(bSkill.skill)}</strong>
+          <div style="font-size:12.5px; margin-top:2px;">Acquiring this skill unlocks ${bSkill.unlocked_roles.length} target career paths and ${bSkill.unlocked_downstream_skills.length} downstream skills.</div>
+        </div>
+        <button class="secondary small" onclick="go('graph')">Inspect Graph →</button>
+      </div>
+    ` : ''}
+
+    <div class="grid two">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h3 style="margin:0">Role Checklist & Semantic Bridges</h3>
+          <span class="pill">${esc(a.target_role)}</span>
+        </div>
+        <div style="margin-bottom:14px; font-size:13px; color:var(--muted);">${esc(a.explanation)}</div>
+        
+        <div style="font-size:12px; font-weight:700; color:var(--muted); margin:10px 0 6px;">MATCHED SKILLS</div>
+        <div class="tag-list" style="margin-bottom:14px;">
+          ${a.matched.map(s => `<span class="tag verified">✓ ${esc(s)}</span>`).join('') || '<span class="pill muted">None yet</span>'}
+        </div>
+
+        <div style="font-size:12px; font-weight:700; color:var(--muted); margin:10px 0 6px;">PRIORITY GAPS</div>
+        <div class="tag-list">
+          ${a.missing.map(s => `<span class="tag missing">✕ ${esc(s)}</span>`).join('') || '<span class="pill green">All checklist skills found!</span>'}
+        </div>
+
+        ${a.semantic_bridges.length ? `
+          <div style="margin-top:16px; padding:10px; background:#eff6ff; border-radius:9px; border:1px solid #bfdbfe;">
+            <div style="font-size:12px; font-weight:700; color:#1e40af;">💡 Semantic Bridge Detected:</div>
+            ${a.semantic_bridges.map(b => `<div style="font-size:12px; color:#1e3a8a; margin-top:3px;">• <strong>${esc(b.skill)}</strong> (${b.confidence}% semantic confidence): ${esc(b.insight)}</div>`).join('')}
+          </div>
+        ` : ''}
+
+        <button class="secondary" style="margin-top:16px; width:100%;" onclick="go('analysis')">Open Learning Roadmap →</button>
+      </div>
+
+      <div class="card">
+        <h3>Quick Co-pilot Actions</h3>
+        <p style="color:var(--muted); font-size:13px;">What would you like to accomplish next?</p>
+        <div style="display:grid; gap:8px;">
+          <button class="ghost" style="justify-content:flex-start; text-align:left; padding:10px 14px;" onclick="askAgentPrompt('What should I work on this week?')">
+            "What should I work on this week?"
+          </button>
+          <button class="ghost" style="justify-content:flex-start; text-align:left; padding:10px 14px;" onclick="go('jobs')">
+            Match resume against live jobs with NLP
+          </button>
+          <button class="ghost" style="justify-content:flex-start; text-align:left; padding:10px 14px;" onclick="go('passport')">
+            Generate shareable recruiter link
+          </button>
+          <button class="ghost" style="justify-content:flex-start; text-align:left; padding:10px 14px;" onclick="go('interview')">
+            Practice STAR interview response
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function askAgentPrompt(text) {
+  go('agent');
+  setTimeout(() => {
+    let inp = document.getElementById('chatInput');
+    if (inp) {
+      inp.value = text;
+      sendAgentMessage();
+    }
+  }, 200);
+}
+
+/* ================= 2. PROFILE ================= */
+async function renderProfile(c) {
+  let d = await api('/api/me');
+  let p = d.profile;
+
+  c.innerHTML = `
+    <div class="page-title">
+      <div>
+        <h1>Career Digital Twin</h1>
+        <p>A living profile of your education, skills, projects, and career targets.</p>
+      </div>
+      <span class="pill green">● Saved locally & secure</span>
+    </div>
+
+    <div class="grid two">
+      <div class="card">
+        <h3>Profile & Target Role</h3>
+        <div class="field">
+          <label>Full name</label>
+          <input id="pName" value="${esc(d.user.name)}">
+        </div>
+        <div class="field">
+          <label>Target career path</label>
+          <select id="pRole" onchange="updateRoleDetails()">
+            ${roles.map(r => `<option ${r.name === p.target_role ? 'selected' : ''}>${esc(r.name)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field">
+          <label>Education</label>
+          <textarea id="pEducation" placeholder="Degree, institution, graduation year...">${esc(p.education)}</textarea>
+        </div>
+        <div class="field">
+          <label>Experience summary</label>
+          <textarea id="pExperience" placeholder="Internships, projects, work experience...">${esc(p.experience)}</textarea>
+        </div>
+        <div class="field">
+          <label>Skills (comma-separated)</label>
+          <textarea id="pSkills" placeholder="Python, SQL, Docker, FastAPI...">${esc(p.skills)}</textarea>
+        </div>
+        <div class="grid two-equal">
+          <div class="field">
+            <label>Location</label>
+            <input id="pLocation" value="${esc(p.location)}">
+          </div>
+          <div class="field">
+            <label>Work mode</label>
+            <select id="pMode">
+              ${['Any','Remote','Hybrid','On-site'].map(x => `<option ${p.work_mode === x ? 'selected' : ''}>${x}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <button style="width:100%; margin-top:8px;" onclick="saveProfile()">Save Career Twin</button>
+      </div>
+
+      <div class="card">
+        <h3>Import Resume (PDF, DOCX, TXT)</h3>
+        <p style="color:var(--muted); font-size:13px;">Extract text, compute NLP semantic embeddings, and populate your twin automatically.</p>
+        <div class="field">
+          <label>Resume file (max 8 MB)</label>
+          <input id="resumeFile" type="file" accept=".pdf,.docx,.txt,.md">
+        </div>
+        <button class="secondary" style="width:100%;" onclick="uploadResume()">Upload & Generate Embeddings</button>
+        <div id="resumeResult" style="margin-top:16px;"></div>
+
+        <h3 style="margin-top:28px;">Target Role Requirements</h3>
+        <div id="roleInfo" style="font-size:13px;"></div>
+      </div>
+    </div>
+  `;
+  updateRoleDetails();
+}
+
+function updateRoleDetails() {
+  let rName = document.getElementById('pRole')?.value || 'Python Developer';
+  let r = roles.find(x => x.name === rName) || roles[0];
+  if (r && document.getElementById('roleInfo')) {
+    document.getElementById('roleInfo').innerHTML = `
+      <strong style="color:var(--blue);">${esc(r.name)}</strong>
+      <p style="color:var(--muted); margin:4px 0 10px;">${esc(r.description)}</p>
+      <div class="tag-list">${r.skills.map(s => `<span class="tag">${esc(s)}</span>`).join('')}</div>
+    `;
+  }
+}
+
+async function saveProfile() {
+  try {
+    await api('/api/profile', {
+      method: 'PUT',
+      body: JSON.stringify({
+        name: val('pName'),
+        education: val('pEducation'),
+        experience: val('pExperience'),
+        skills: val('pSkills'),
+        target_role: val('pRole'),
+        location: val('pLocation'),
+        work_mode: val('pMode')
+      })
+    });
+    user.name = val('pName') || user.name;
+    document.getElementById('topName').textContent = user.name;
+    document.getElementById('sideName').textContent = user.name;
+    toast('Career Digital Twin updated successfully.');
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+async function uploadResume() {
+  let file = document.getElementById('resumeFile')?.files[0];
+  if (!file) return toast('Select a resume file first.');
+  let fd = new FormData();
+  fd.append('file', file);
+  try {
+    let d = await api('/api/resume', { method: 'POST', body: fd });
+    document.getElementById('resumeResult').innerHTML = `
+      <div class="notice" style="background:#ecfdf5; border-color:#a7f3d0; color:#065f46;">
+        ✓ ${esc(d.filename)} processed (${d.characters} chars, ${d.vector_dimensions} vector dims)
+      </div>
+      <div style="font-size:12px; font-weight:700; margin-bottom:4px;">RECOGNIZED SKILLS:</div>
+      <div class="tag-list">${d.skills.map(s => `<span class="tag verified">${esc(s)}</span>`).join('')}</div>
+    `;
+    if (document.getElementById('pSkills')) {
+      document.getElementById('pSkills').value = d.skills.join(', ');
+    }
+    toast(d.message);
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+/* ================= 3. ANALYSIS ================= */
+async function renderAnalysis(c) {
+  let a = await api('/api/analysis');
+  analysisData = a;
+
+  c.innerHTML = `
+    <div class="page-title">
+      <div>
+        <h1>Skill Gap & Learning Roadmap</h1>
+        <p>Review 3 multi-signal alignment: rule-based checklist + NLP semantic cosine similarity.</p>
+      </div>
+      <span class="pill">${esc(a.target_role)}</span>
+    </div>
+
+    <div class="grid two">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3>Target Role Alignment</h3>
+          <div style="font-size:28px; font-weight:850; color:var(--blue);">${a.hybrid_fit_score}%</div>
+        </div>
+        <div class="progress"><span style="width:${a.hybrid_fit_score}%"></span></div>
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--muted); margin-bottom:14px;">
+          <span>Explicit Skill Match: <strong>${a.match_percent}%</strong></span>
+          <span>NLP Semantic Cosine Sim: <strong>${a.semantic_similarity_percent}%</strong></span>
+        </div>
+        <p style="font-size:13px; color:var(--muted);">${esc(a.explanation)}</p>
+
+        <h4 style="margin:16px 0 8px;">Checklist Skills Found (${a.matched.length})</h4>
+        <div class="tag-list">
+          ${a.matched.map(s => `<span class="tag verified">✓ ${esc(s)}</span>`).join('') || '<span class="pill muted">None</span>'}
+        </div>
+
+        <h4 style="margin:16px 0 8px;">Missing / Not Yet Evidenced (${a.missing.length})</h4>
+        <div class="tag-list">
+          ${a.missing.map(s => `<span class="tag missing">✕ ${esc(s)}</span>`).join('') || '<span class="pill green">All checklist skills acquired</span>'}
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Role Specification Checklist</h3>
+        <p style="color:var(--muted); font-size:13px;">${esc(a.description)}</p>
+        <div style="display:grid; gap:8px;">
+          ${a.required.map(s => `
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #f1f5f9;">
+              <strong>${esc(s)}</strong>
+              <span class="pill ${a.matched.includes(s) ? 'green' : 'amber'}">
+                ${a.matched.includes(s) ? 'Evidenced' : 'Skill Gap'}
+              </span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <h3>Suggested Weekly Learning Roadmap</h3>
+      <p style="color:var(--muted); font-size:13px;">Tailored starter tasks to close your gaps and build verifiable portfolio artifacts.</p>
+      ${a.roadmap.length ? a.roadmap.map(r => `
+        <div style="display:grid; grid-template-columns: 46px 1fr auto; gap:14px; padding:14px 0; border-bottom:1px solid #f1f5f9; align-items:center;">
+          <div style="width:40px; height:40px; border-radius:10px; background:#eff6ff; color:#1d4ed8; display:grid; place-items:center; font-weight:800;">W${r.week}</div>
+          <div>
+            <div style="font-weight:700;">${esc(r.skill)}: ${esc(r.task)}</div>
+            <div style="font-size:12.5px; color:var(--muted); margin-top:3px;">Proof artifact: ${esc(r.proof)}</div>
+          </div>
+          <button class="ghost small" onclick="addCustomTask('${esc(r.skill)}: Study & build artifact', '${esc(r.skill)}')">+ Add to tasks</button>
+        </div>
+      `).join('') : '<div style="text-align:center; padding:30px; color:var(--muted);">All checklist skills completed! Check out advanced project ideas with the AI Co-pilot.</div>'}
+    </div>
+  `;
+}
+
+async function addCustomTask(title, skill) {
+  try {
+    await api('/api/roadmap/add-task', {
+      method: 'POST',
+      body: JSON.stringify({ title, skill, category: 'Learning' })
+    });
+    toast('Task added to your personal roadmap.');
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+/* ================= 4. OPPORTUNITY DISCOVERY & REVIEW 3 NLP ================= */
+async function renderJobs(c) {
+  c.innerHTML = `
+    <div class="page-title">
+      <div>
+        <h1>Opportunity Discovery & Semantic NLP Matching</h1>
+        <p>Review 3 Implementation: Cosine similarity of NLP embeddings combined with explicit skill overlap.</p>
+      </div>
+      <div class="pill purple">CosSim(A, B) = (A · B) / (||A|| × ||B||)</div>
+    </div>
+
+    <div class="tabs-bar">
+      <button class="tab-btn ${currentJobsTab === 'feed' ? 'active' : ''}" onclick="switchJobsTab('feed')">Live Opportunity Feed</button>
+      <button class="tab-btn ${currentJobsTab === 'custom' ? 'active' : ''}" onclick="switchJobsTab('custom')">Custom JD Analyzer</button>
+      <button class="tab-btn ${currentJobsTab === 'benchmarks' ? 'active' : ''}" onclick="switchJobsTab('benchmarks')">Review 3 Benchmarks</button>
+    </div>
+
+    <div id="jobsTabContent"></div>
+  `;
+  renderCurrentJobsTab();
+}
+
+function switchJobsTab(tab) {
+  currentJobsTab = tab;
+  document.querySelectorAll('.tabs-bar .tab-btn').forEach(b => b.classList.remove('active'));
+  renderCurrentJobsTab();
+}
+
+async function renderCurrentJobsTab() {
+  let box = document.getElementById('jobsTabContent');
+  if (!box) return;
+
+  if (currentJobsTab === 'feed') {
+    box.innerHTML = '<div style="text-align:center; padding:40px; color:var(--muted);">Computing vector similarities across opportunities...</div>';
+    let data = await api(`/api/jobs?weight_semantic=${jobsWeightSemantic}&weight_keyword=${jobsWeightKeyword}`);
+    
+    box.innerHTML = `
+      <!-- Weight Slider Control -->
+      <div class="card" style="margin-bottom:18px; background:#f8fafc;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div>
+            <strong>Hybrid Score Weight Tuning</strong>
+            <div style="font-size:12.5px; color:var(--muted);">Adjust the balance between Semantic Embedding Cosine Similarity and Explicit Skill Overlap.</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:14px;">
+            <span style="font-size:13px; font-weight:600;">NLP Semantic: <span id="semWeightLabel">${Math.round(jobsWeightSemantic * 100)}%</span></span>
+            <input type="range" min="0" max="1" step="0.1" value="${jobsWeightSemantic}" oninput="updateWeights(this.value)" style="cursor:pointer; width:130px;">
+            <span style="font-size:13px; font-weight:600;">Keyword: <span id="keyWeightLabel">${Math.round(jobsWeightKeyword * 100)}%</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Role & Company</th>
+                <th>Work Mode</th>
+                <th>Explicit Overlap</th>
+                <th>NLP Semantic CosSim</th>
+                <th>Hybrid Fit</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${data.jobs.map(j => `
+                <tr>
+                  <td>
+                    <strong>${esc(j.role)}</strong>
+                    <div style="color:var(--muted); font-size:12.5px;">${esc(j.company)} · ${esc(j.location)}</div>
+                    <div style="font-size:12px; color:#4338ca; margin-top:3px;">${esc(j.salary_range)}</div>
+                  </td>
+                  <td><span class="pill muted">${esc(j.work_mode)}</span></td>
+                  <td>
+                    <strong>${j.skill_overlap_pct}%</strong>
+                    <div class="tag-list" style="margin-top:4px;">
+                      ${j.matched_skills.map(s => `<span class="tag verified">${esc(s)}</span>`).join('')}
+                    </div>
+                  </td>
+                  <td>
+                    <div style="font-weight:700; color:var(--purple);">${j.semantic_score_pct}%</div>
+                    <div style="font-size:11.5px; color:var(--muted);">Vector Dim: 60</div>
+                    ${j.matched_concepts.length ? `
+                      <div style="font-size:11.5px; color:#065f46; margin-top:2px;">
+                        Concept: ${esc(j.matched_concepts[0].concept)}
+                      </div>
+                    ` : ''}
+                  </td>
+                  <td>
+                    <div style="font-size:18px; font-weight:850; color:var(--blue);">${j.hybrid_score}%</div>
+                    <div class="progress" style="width:80px; margin:4px 0;"><span style="width:${j.hybrid_score}%"></span></div>
+                  </td>
+                  <td>
+                    <div class="actions">
+                      <button class="secondary small" onclick='showJobDetails(${JSON.stringify(j).replace(/'/g, "&#39;")})'>Explain</button>
+                      <button class="small" onclick='saveOpportunity(${JSON.stringify(j.role)}, ${JSON.stringify(j.company)}, ${JSON.stringify(j.url)})'>Track</button>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Job Explanation Modal Box -->
+      <div id="jobModal" class="hidden" style="margin-top:20px;"></div>
+    `;
+  } else if (currentJobsTab === 'custom') {
+    box.innerHTML = `
+      <div class="grid two">
+        <div class="card">
+          <h3>Paste Any Job Description</h3>
+          <p style="color:var(--muted); font-size:13px;">Test any vacancy text from LinkedIn, Indeed, or company websites with our trained domain NLP model.</p>
+          <div class="field">
+            <label>Job title</label>
+            <input id="customTitle" placeholder="e.g. Senior Machine Learning Engineer">
+          </div>
+          <div class="field">
+            <label>Company name</label>
+            <input id="customCompany" placeholder="e.g. Acme AI Technologies">
+          </div>
+          <div class="field">
+            <label>Required skills (optional, comma-separated)</label>
+            <input id="customSkills" placeholder="Python, Scikit-learn, SQL, Docker (or leave blank to auto-extract)">
+          </div>
+          <div class="field">
+            <label>Full Job Description</label>
+            <textarea id="customDesc" style="min-height:180px;" placeholder="Paste requirements, responsibilities, and qualifications..."></textarea>
+          </div>
+          <button style="width:100%;" onclick="analyzeCustomJob()">Calculate Semantic Match with Embeddings</button>
+        </div>
+
+        <div class="card" id="customResultBox">
+          <div style="text-align:center; padding:60px 20px; color:var(--muted);">
+            Paste a job description on the left and click "Calculate Semantic Match" to see the vector similarity breakdown.
+          </div>
+        </div>
+      </div>
+    `;
+  } else if (currentJobsTab === 'benchmarks') {
+    let bData = await api('/api/evaluation/benchmarks');
+    box.innerHTML = `
+      <div class="card">
+        <h3>Review 3 Official Evaluation Benchmarks</h3>
+        <p style="color:var(--muted); font-size:13px;">
+          Comparing rule-based keyword matching vs NLP semantic embeddings across edge cases:
+          semantic equivalences with different wording, false friends, and cross-domain distinctions.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Test Case & Category</th>
+                <th>Resume Text Input (A)</th>
+                <th>Job Requirement Input (B)</th>
+                <th>Rule-Based Match</th>
+                <th>NLP Cosine Sim</th>
+                <th>Evaluation Outcome</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${bData.benchmarks.map(b => `
+                <tr>
+                  <td>
+                    <strong>${esc(b.category)}</strong>
+                    <div style="font-size:12px; color:var(--muted);">${esc(b.description || '')}</div>
+                  </td>
+                  <td style="font-size:12.5px; max-width:200px;">"${esc(b.resume_text)}"</td>
+                  <td style="font-size:12.5px; max-width:200px;">"${esc(b.job_text)}"</td>
+                  <td><span class="pill muted">${esc(b.keyword_overlap || '0%')}</span></td>
+                  <td>
+                    <span class="pill ${b.semantic_percentage >= 50 ? 'green' : 'amber'}">
+                      ${b.semantic_percentage}% (${b.semantic_similarity})
+                    </span>
+                  </td>
+                  <td style="font-size:12.5px; color:#065f46;">${esc(b.outcome || 'Verified')}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function updateWeights(val) {
+  jobsWeightSemantic = parseFloat(val);
+  jobsWeightKeyword = Math.round((1.0 - jobsWeightSemantic) * 10) / 10;
+  document.getElementById('semWeightLabel').textContent = Math.round(jobsWeightSemantic * 100) + '%';
+  document.getElementById('keyWeightLabel').textContent = Math.round(jobsWeightKeyword * 100) + '%';
+  renderCurrentJobsTab();
+}
+
+function showJobDetails(j) {
+  let modal = document.getElementById('jobModal');
+  modal.classList.remove('hidden');
+  modal.innerHTML = `
+    <div class="card" style="background:#eff6ff; border-color:#93c5fd;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="margin:0; color:#1e3a8a;">Semantic Breakdown: ${esc(j.role)} at ${esc(j.company)}</h3>
+        <button class="ghost small" onclick="document.getElementById('jobModal').classList.add('hidden')">✕ Close</button>
+      </div>
+      <p style="font-size:13.5px; color:#1e3a8a; margin:8px 0 14px;">${esc(j.explanation)}</p>
+      
+      <div class="grid two-equal">
+        <div style="background:white; padding:14px; border-radius:10px; border:1px solid #bfdbfe;">
+          <strong>Shared Conceptual Affinities</strong>
+          <div style="margin-top:8px;">
+            ${j.matched_concepts.length ? j.matched_concepts.map(c => `
+              <div style="display:flex; justify-content:space-between; font-size:12.5px; padding:4px 0;">
+                <span>• ${esc(c.concept)}</span>
+                <span style="color:#059669; font-weight:700;">${c.resume_affinity}% alignment</span>
+              </div>
+            `).join('') : '<div style="font-size:12.5px; color:var(--muted);">No major concept clusters detected.</div>'}
+          </div>
+        </div>
+        <div style="background:white; padding:14px; border-radius:10px; border:1px solid #bfdbfe;">
+          <strong>Semantic Bridges (Implicitly Covered)</strong>
+          <div style="margin-top:8px;">
+            ${j.semantic_bridges.length ? j.semantic_bridges.map(b => `
+              <div style="font-size:12px; color:#1e3a8a; margin-bottom:5px;">
+                <strong>${esc(b.skill)}</strong>: ${esc(b.insight)}
+              </div>
+            `).join('') : '<div style="font-size:12.5px; color:var(--muted);">No implicit semantic bridges needed.</div>'}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function analyzeCustomJob() {
+  let title = val('customTitle');
+  let company = val('customCompany');
+  let skills = val('customSkills');
+  let desc = val('customDesc');
+  if (!desc.trim()) return toast('Please paste a job description.');
+
+  let resBox = document.getElementById('customResultBox');
+  resBox.innerHTML = '<div style="text-align:center; padding:40px; color:var(--muted);">Encoding vectors and calculating CosSim(A, B)...</div>';
+
+  try {
+    let d = await api('/api/jobs/custom-match', {
+      method: 'POST',
+      body: JSON.stringify({
+        job_title: title || 'Custom Vacancy',
+        company: company || 'Company',
+        required_skills: skills,
+        job_description: desc,
+        weight_semantic: jobsWeightSemantic,
+        weight_keyword: jobsWeightKeyword
+      })
+    });
+
+    let m = d.match_result;
+    resBox.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="margin:0;">Analysis Results</h3>
+        <span class="pill purple">${m.fit_tier}</span>
+      </div>
+      <div style="display:flex; align-items:baseline; gap:12px; margin:14px 0 6px;">
+        <div style="font-size:42px; font-weight:900; color:var(--blue);">${m.hybrid_score}%</div>
+        <div style="font-size:13px; color:var(--muted);">Hybrid Fit Score</div>
+      </div>
+      <div class="progress" style="height:10px;"><span style="width:${m.hybrid_score}%"></span></div>
+
+      <div class="grid two-equal" style="margin:16px 0;">
+        <div style="background:#f8fafc; padding:12px; border-radius:10px; border:1px solid var(--line);">
+          <div style="font-size:12px; color:var(--muted); font-weight:700;">SEMANTIC COSSIM</div>
+          <div style="font-size:22px; font-weight:800; color:var(--purple);">${m.semantic_score_pct}%</div>
+          <div style="font-size:11px; color:var(--muted);">Cosine Sim: ${m.semantic_similarity}</div>
+        </div>
+        <div style="background:#f8fafc; padding:12px; border-radius:10px; border:1px solid var(--line);">
+          <div style="font-size:12px; color:var(--muted); font-weight:700;">EXPLICIT SKILL OVERLAP</div>
+          <div style="font-size:22px; font-weight:800; color:#059669;">${m.skill_overlap_pct}%</div>
+          <div style="font-size:11px; color:var(--muted);">${m.matched_skills.length} of ${d.required_skills.length} skills found</div>
+        </div>
+      </div>
+
+      <p style="font-size:13px; color:#334155;">${esc(m.explanation)}</p>
+
+      <div style="font-size:12px; font-weight:700; color:var(--muted); margin:12px 0 4px;">MATCHED SKILLS</div>
+      <div class="tag-list" style="margin-bottom:10px;">
+        ${m.matched_skills.map(s => `<span class="tag verified">✓ ${esc(s)}</span>`).join('') || '<span class="pill muted">None explicitly</span>'}
+      </div>
+
+      <div style="font-size:12px; font-weight:700; color:var(--muted); margin:12px 0 4px;">MISSING CHECKLIST SKILLS</div>
+      <div class="tag-list" style="margin-bottom:16px;">
+        ${m.missing_skills.map(s => `<span class="tag missing">✕ ${esc(s)}</span>`).join('') || '<span class="pill green">All skills matched!</span>'}
+      </div>
+
+      <button style="width:100%;" onclick="saveOpportunity('${esc(d.job_title)}', '${esc(d.company)}', '')">Track this Job in Applications</button>
+    `;
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+async function saveOpportunity(role, company, url) {
+  try {
+    await api('/api/applications', {
+      method: 'POST',
+      body: JSON.stringify({ company, role, url, status: 'Saved', notes: 'Added from Opportunity Discovery' })
+    });
+    toast('Saved to your Application Tracker.');
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+/* ================= 5. PERSONAL CAREER AI AGENT (ITEM 8) ================= */
+async function renderAgent(c) {
+  let histData = await api('/api/agent/history');
+
+  c.innerHTML = `
+    <div class="page-title">
+      <div>
+        <h1>Personal Career AI Agent</h1>
+        <p>A context-aware career co-pilot that knows your profile, projects, interview results, and roadmap.</p>
+      </div>
+      <span class="pill purple">✦ Local Intelligence Co-pilot</span>
+    </div>
+
+    <div class="chat-container">
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-msg agent">
+          👋 Hello ${esc(user.name.split(' ')[0])}! I am your personal career co-pilot. I have analyzed your Career Digital Twin, your uploaded resume embeddings, completed projects, and interview practice results.
+          <br><br>
+          Ask me <strong>"What should I work on this week?"</strong>, <strong>"What is my highest-leverage missing skill?"</strong>, or how to turn your skills into verified project evidence!
+        </div>
+        ${histData.history.map(m => `
+          <div class="chat-msg ${m.sender}">
+            <div style="white-space:pre-wrap;">${esc(m.message)}</div>
+            ${m.actionable_tasks && m.actionable_tasks.length ? `
+              <div style="margin-top:10px; padding-top:8px; border-top:1px solid rgba(0,0,0,0.08);">
+                <div style="font-size:12px; font-weight:700; color:var(--blue); margin-bottom:6px;">⚡ ACTIONABLE TASKS:</div>
+                ${m.actionable_tasks.map(t => `
+                  <div style="background:white; border:1px solid var(--line); border-radius:8px; padding:8px 10px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                      <strong>${esc(t.title)}</strong>
+                      <div style="font-size:11.5px; color:var(--muted);">${esc(t.details || '')}</div>
+                    </div>
+                    <button class="ghost small" onclick="addCustomTask('${esc(t.title)}', '${esc(t.skill || '')}')">+ Commit</button>
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="prompt-chips">
+        <div class="chip" onclick="fillAgentInput('What should I work on this week?')">What should I work on this week?</div>
+        <div class="chip" onclick="fillAgentInput('What is my highest-leverage missing skill?')">Highest-leverage missing skill?</div>
+        <div class="chip" onclick="fillAgentInput('What project should I build to prove my skills?')">Recommended portfolio project?</div>
+        <div class="chip" onclick="fillAgentInput('Evaluate my interview readiness')">Interview readiness critique?</div>
+        <div class="chip" onclick="fillAgentInput('How do I improve my Skills Passport trust score?')">Improve Passport score?</div>
+      </div>
+
+      <div class="chat-input-bar">
+        <input id="chatInput" placeholder="Ask your career agent anything about your progress, gaps, or tasks..." onkeydown="if(event.key==='Enter')sendAgentMessage()">
+        <button onclick="sendAgentMessage()">Send →</button>
+      </div>
+    </div>
+  `;
+  scrollChat();
+}
+
+function fillAgentInput(text) {
+  let inp = document.getElementById('chatInput');
+  if (inp) {
+    inp.value = text;
+    sendAgentMessage();
+  }
+}
+
+function scrollChat() {
+  let m = document.getElementById('chatMessages');
+  if (m) m.scrollTop = m.scrollHeight;
+}
+
+async function sendAgentMessage() {
+  let inp = document.getElementById('chatInput');
+  let text = inp.value.trim();
+  if (!text) return;
+  inp.value = '';
+
+  let mBox = document.getElementById('chatMessages');
+  mBox.innerHTML += `<div class="chat-msg user">${esc(text)}</div>`;
+  scrollChat();
+
+  try {
+    let d = await api('/api/agent/chat', {
+      method: 'POST',
+      body: JSON.stringify({ message: text })
+    });
+
+    let tasksHtml = '';
+    if (d.actionable_tasks && d.actionable_tasks.length) {
+      tasksHtml = `
+        <div style="margin-top:10px; padding-top:8px; border-top:1px solid rgba(0,0,0,0.08);">
+          <div style="font-size:12px; font-weight:700; color:var(--blue); margin-bottom:6px;">⚡ RECOMMENDED ACTIONABLE TASKS:</div>
+          ${d.actionable_tasks.map(t => `
+            <div style="background:white; border:1px solid var(--line); border-radius:8px; padding:8px 10px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <strong>${esc(t.title)}</strong>
+                <div style="font-size:11.5px; color:var(--muted);">${esc(t.details || '')}</div>
+              </div>
+              <button class="ghost small" onclick="addCustomTask('${esc(t.title)}', '${esc(t.skill || '')}')">+ Commit to Roadmap</button>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    mBox.innerHTML += `
+      <div class="chat-msg agent">
+        <div style="white-space:pre-wrap;">${esc(d.reply)}</div>
+        ${tasksHtml}
+      </div>
+    `;
+    scrollChat();
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+/* ================= 6. SKILL DEPENDENCY GRAPH (ITEM 9) ================= */
+async function renderGraph(c) {
+  let g = await api('/api/skill-graph');
+
+  c.innerHTML = `
+    <div class="page-title">
+      <div>
+        <h1>Skill Dependency Graph & Bottleneck Analysis</h1>
+        <p>Interactive graph connecting roles, skills, projects, and prerequisites to reveal high-leverage growth paths.</p>
+      </div>
+      <span class="pill">${esc(g.target_role)}</span>
+    </div>
+
+    <!-- Bottleneck Spotlight Card -->
+    ${g.highest_leverage_skill ? `
+      <div class="card" style="background:linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); color:white; margin-bottom:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+          <div>
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:1px; color:#a5b4fc;">Graph Bottleneck Analysis</div>
+            <h2 style="margin:4px 0 8px; font-size:24px;">#1 High-Leverage Skill: ${esc(g.highest_leverage_skill.skill)}</h2>
+            <p style="margin:0; color:#e0e7ff; max-width:700px; font-size:14px;">${esc(g.bottleneck_insight)}</p>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:12px; color:#c7d2fe;">Leverage Score</div>
+            <div style="font-size:38px; font-weight:900; color:#38bdf8;">${g.highest_leverage_skill.leverage_score}</div>
+          </div>
+        </div>
+      </div>
+    ` : ''}
+
+    <div class="grid two">
+      <div class="card">
+        <h3>Interactive Dependency Matrix</h3>
+        <p style="color:var(--muted); font-size:13px;">Filter nodes by status or click any skill to view its prerequisite unlocks.</p>
+        
+        <div style="display:grid; gap:10px; max-height:480px; overflow-y:auto; padding-right:6px;">
+          ${g.nodes.map(n => `
+            <div style="padding:12px; border:1px solid #f1f5f9; border-radius:10px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick='inspectGraphNode(${JSON.stringify(n).replace(/'/g, "&#39;")})'>
+              <div>
+                <strong>${esc(n.name)}</strong>
+                <div style="font-size:12px; color:var(--muted);">${esc(n.category)} · ${esc(n.level)}</div>
+              </div>
+              <span class="pill ${n.status === 'mastered' ? 'green' : n.status === 'ready' ? 'purple' : 'muted'}">
+                ${n.status === 'mastered' ? '✓ Mastered' : n.status === 'ready' ? '● Ready to Learn' : '🔒 Locked'}
+              </span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="card" id="graphNodeInspector">
+        <h3>Node Inspector</h3>
+        <p style="color:var(--muted); font-size:13px;">Select any skill node from the matrix on the left to inspect its prerequisites, downstream unlocks, and target role impacts.</p>
+        
+        <div style="padding:24px; text-align:center; color:var(--muted); border:1px dashed #cbd5e1; border-radius:12px; margin-top:20px;">
+          Click a node to inspect
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function inspectGraphNode(n) {
+  let box = document.getElementById('graphNodeInspector');
+  box.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h3 style="margin:0;">${esc(n.name)}</h3>
+      <span class="pill ${n.status === 'mastered' ? 'green' : n.status === 'ready' ? 'purple' : 'muted'}">
+        ${n.status.toUpperCase()}
+      </span>
+    </div>
+    <div style="color:var(--muted); font-size:13px; margin:4px 0 14px;">${esc(n.category)} · ${esc(n.level)}</div>
+    <p style="font-size:13.5px;">${esc(n.description)}</p>
+
+    <div style="margin:16px 0;">
+      <strong>Prerequisites (${n.prerequisites.length})</strong>
+      <div class="tag-list" style="margin-top:6px;">
+        ${n.prerequisites.map(p => `<span class="tag">${esc(p)}</span>`).join('') || '<span class="pill muted">None (Core Foundation)</span>'}
+      </div>
+    </div>
+
+    <div style="margin:16px 0;">
+      <strong>Downstream Skills Unlocked (${n.unlocks.length})</strong>
+      <div class="tag-list" style="margin-top:6px;">
+        ${n.unlocks.map(u => `<span class="tag verified">→ ${esc(u)}</span>`).join('') || '<span class="pill muted">Terminal specialization</span>'}
+      </div>
+    </div>
+
+    <button style="width:100%; margin-top:14px;" onclick="addCustomTask('Master ${esc(n.name)} and document in portfolio', '${esc(n.name)}')">
+      + Add ${esc(n.name)} to Learning Roadmap
+    </button>
+  `;
+}
+
+/* ================= 7. EVIDENCE-BASED SKILLS PASSPORT (ITEM 10) ================= */
+async function renderPassport(c) {
+  let p = await api('/api/passport');
+  let pass = p.passport;
+
+  c.innerHTML = `
+    <div class="page-title">
+      <div>
+        <h1>Evidence-Based Skills Passport</h1>
+        <p>Replace unverified resume claims with 4-tier verifiable evidence and share a public recruiter link.</p>
+      </div>
+      <button class="secondary" onclick="window.open('${p.public_url}', '_blank')">Preview Recruiter View ↗</button>
+    </div>
+
+    <div class="grid two">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <div>
+            <div style="font-size:12px; color:var(--muted); font-weight:700;">PASSPORT TRUST INDEX</div>
+            <div style="font-size:38px; font-weight:900; color:var(--blue);">${pass.trust_index}%</div>
+          </div>
+          <span class="pill green">${esc(pass.credibility_status)}</span>
+        </div>
+        <div class="progress purple" style="height:10px;"><span style="width:${pass.trust_index}%"></span></div>
+        <p style="font-size:13px; color:var(--muted); margin:12px 0 16px;">${esc(pass.advice)}</p>
+
+        <div class="grid two-equal" style="margin-bottom:16px;">
+          <div style="background:#ecfdf5; border:1px solid #a7f3d0; padding:12px; border-radius:10px;">
+            <div style="font-size:12px; color:#065f46; font-weight:700;">PROJECT-EVIDENCED</div>
+            <div style="font-size:24px; font-weight:850; color:#065f46;">${pass.tier_counts['Project-Evidenced']}</div>
+            <div style="font-size:11px; color:#047857;">100% Trust (Code artifacts)</div>
+          </div>
+          <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:12px; border-radius:10px;">
+            <div style="font-size:12px; color:#1e40af; font-weight:700;">INTERVIEW-PASSED</div>
+            <div style="font-size:24px; font-weight:850; color:#1e40af;">${pass.tier_counts['Interview-Passed']}</div>
+            <div style="font-size:11px; color:#1d4ed8;">75% Trust (Scored answers)</div>
+          </div>
+        </div>
+
+        <div class="grid two-equal">
+          <div style="background:#fffbeb; border:1px solid #fde68a; padding:12px; border-radius:10px;">
+            <div style="font-size:12px; color:#92400e; font-weight:700;">RESUME-DETECTED</div>
+            <div style="font-size:24px; font-weight:850; color:#92400e;">${pass.tier_counts['Resume-Detected']}</div>
+            <div style="font-size:11px; color:#b45309;">50% Trust (Document scan)</div>
+          </div>
+          <div style="background:#f1f5f9; border:1px solid #e2e8f0; padding:12px; border-radius:10px;">
+            <div style="font-size:12px; color:#475569; font-weight:700;">SELF-REPORTED</div>
+            <div style="font-size:24px; font-weight:850; color:#475569;">${pass.tier_counts['Self-Reported']}</div>
+            <div style="font-size:11px; color:#64748b;">25% Trust (Unverified claim)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Public Shareable Recruiter Link</h3>
+        <p style="color:var(--muted); font-size:13px;">Share your verified portfolio with recruiters and hiring managers. No login is required for external viewers.</p>
+        
+        <div class="field">
+          <label>Public Portfolio URL</label>
+          <input readonly value="${esc(p.public_url)}" id="shareUrlBox">
+        </div>
+        
+        <div style="display:flex; gap:10px; margin-top:12px;">
+          <button style="flex:1;" onclick="copyShareLink()">📋 Copy Public Link</button>
+          <button class="secondary" onclick="toggleShareStatus()">${p.is_public ? 'Make Private' : 'Enable Sharing'}</button>
+        </div>
+
+        <div class="notice" style="margin-top:20px;">
+          Status: <strong>${p.is_public ? 'Active & Shareable' : 'Private (Link Disabled)'}</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <h3>Tiered Skills Roster (${pass.total_skills} Skills)</h3>
+      <div style="display:grid; gap:10px; margin-top:14px;">
+        ${pass.passport_skills.map(s => `
+          <div style="padding:12px 14px; border:1px solid #f1f5f9; border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <strong>${esc(s.skill)}</strong>
+              <div style="font-size:12.5px; color:var(--muted); margin-top:2px;">${esc(s.evidence_detail)}</div>
+            </div>
+            <span class="pill ${s.badge_color}">${s.tier} (${s.trust_score}% Trust)</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function copyShareLink() {
+  let box = document.getElementById('shareUrlBox');
+  box.select();
+  navigator.clipboard.writeText(box.value);
+  toast('Recruiter portfolio link copied to clipboard!');
+}
+
+async function toggleShareStatus() {
+  try {
+    let d = await api('/api/passport/toggle-share', { method: 'POST' });
+    toast(d.message);
+    renderPassport(document.getElementById('content'));
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+/* ================= 8. PROJECTS & PROOF ================= */
+async function renderProjects(c) {
+  let d = await api('/api/projects');
+  let rows = d.projects;
+
+  c.innerHTML = `
+    <div class="page-title">
+      <div>
+        <h1>Projects & Practical Proof</h1>
+        <p>Demonstrate working software to elevate your Skills Passport to Tier 4 (Project-Evidenced).</p>
+      </div>
+    </div>
+
+    <div class="grid two">
+      <div class="card">
+        <h3>Add Project Evidence</h3>
+        <div class="field">
+          <label>Project title</label>
+          <input id="prTitle" placeholder="e.g. Distributed Task Queue & REST API">
+        </div>
+        <div class="field">
+          <label>Problem & technical architecture</label>
+          <textarea id="prDesc" placeholder="What problem did it solve? What libraries and architectures did you use?"></textarea>
+        </div>
+        <div class="field">
+          <label>Skills demonstrated (comma-separated)</label>
+          <input id="prSkills" placeholder="Python, FastAPI, SQL, Docker, Testing">
+        </div>
+        <div class="grid two-equal">
+          <div class="field">
+            <label>GitHub repository link</label>
+            <input id="prGithub" placeholder="https://github.com/...">
+          </div>
+          <div class="field">
+            <label>Live demo link (optional)</label>
+            <input id="prLive" placeholder="https://...">
+          </div>
+        </div>
+        <button style="width:100%; margin-top:8px;" onclick="addProject()">Save & Verify Project</button>
+      </div>
+
+      <div class="card">
+        <h3>Evidence Quality Checklist</h3>
+        <div style="display:grid; gap:12px;">
+          <div style="display:flex; gap:10px;">
+            <div class="avatar" style="background:#ecfdf5; color:#065f46;">1</div>
+            <div>
+              <strong>Define the Problem Context</strong>
+              <div style="font-size:12.5px; color:var(--muted);">Explain the use-case and why specific technical choices were made.</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <div class="avatar" style="background:#eff6ff; color:#1e40af;">2</div>
+            <div>
+              <strong>Highlight Your Specific Contribution</strong>
+              <div style="font-size:12.5px; color:var(--muted);">Separate your work from templates and boilerplate libraries.</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <div class="avatar" style="background:#f5f3ff; color:#5b21b6;">3</div>
+            <div>
+              <strong>Include Verifiable Code Links</strong>
+              <div style="font-size:12.5px; color:var(--muted);">Link to clean GitHub repos with setup instructions and automated tests.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <h3>Your Project Portfolio (${rows.length})</h3>
+      ${rows.length ? rows.map(p => `
+        <div style="padding:14px 0; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <strong style="font-size:15px;">${esc(p.title)}</strong>
+            <p style="margin:4px 0 8px; color:#334155; font-size:13.5px;">${esc(p.description)}</p>
+            <div class="tag-list" style="margin-bottom:6px;">
+              ${(p.skills || '').split(',').map(s => `<span class="tag verified">${esc(s.trim())}</span>`).join('')}
+            </div>
+            ${p.github_url ? `<a href="${esc(p.github_url)}" target="_blank" style="font-size:12px; color:var(--blue); font-weight:600; text-decoration:none;">GitHub Repo ↗ &nbsp;</a>` : ''}
+            ${p.live_url ? `<a href="${esc(p.live_url)}" target="_blank" style="font-size:12px; color:#059669; font-weight:600; text-decoration:none;">Live Demo ↗</a>` : ''}
+          </div>
+          <button class="danger small" onclick="deleteProject(${p.id})">Delete</button>
+        </div>
+      `).join('') : '<div style="text-align:center; padding:30px; color:var(--muted);">No projects added yet. Adding one project immediately boosts your Skills Passport Trust Index!</div>'}
+    </div>
+  `;
+}
+
+async function addProject() {
+  try {
+    await api('/api/projects', {
+      method: 'POST',
+      body: JSON.stringify({
+        title: val('prTitle'),
+        description: val('prDesc'),
+        skills: val('prSkills'),
+        github_url: val('prGithub'),
+        live_url: val('prLive')
+      })
+    });
+    toast('Project saved and verified.');
+    renderProjects(document.getElementById('content'));
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+async function deleteProject(id) {
+  try {
+    await api('/api/projects/' + id, { method: 'DELETE' });
+    toast('Project deleted.');
+    renderProjects(document.getElementById('content'));
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+/* ================= 9. APPLICATIONS TRACKER ================= */
+async function renderApplications(c) {
+  let d = await api('/api/applications');
+  let rows = d.applications;
+
+  c.innerHTML = `
+    <div class="page-title">
+      <div>
+        <h1>Application Pipeline Tracker</h1>
+        <p>Track your opportunities from saved to offer.</p>
+      </div>
+    </div>
+
+    <div class="grid two">
+      <div class="card">
+        <h3>Add New Application</h3>
+        <div class="field">
+          <label>Company</label>
+          <input id="appCompany" placeholder="e.g. Swiggy Tech">
+        </div>
+        <div class="field">
+          <label>Role</label>
+          <input id="appRole" placeholder="e.g. Python Backend Engineer">
+        </div>
+        <div class="field">
+          <label>Application URL (optional)</label>
+          <input id="appUrl" placeholder="https://...">
+        </div>
+        <div class="field">
+          <label>Status</label>
+          <select id="appStatus">
+            ${['Saved','Preparing','Applied','Assessment','Interview','Offer','Rejected','Withdrawn'].map(s => `<option>${s}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field">
+          <label>Notes</label>
+          <textarea id="appNotes" placeholder="Recruiter contact, interview dates, preparation reminders..."></textarea>
+        </div>
+        <button style="width:100%; margin-top:8px;" onclick="addApplication()">Add Application</button>
+      </div>
+
+      <div class="card">
+        <h3>Pipeline Stages</h3>
+        <div style="display:grid; gap:8px;">
+          ${['Saved','Preparing','Applied','Assessment','Interview','Offer','Rejected','Withdrawn'].map(s => `
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #f1f5f9;">
+              <span>${s}</span>
+              <strong>${rows.filter(a => a.status === s).length}</strong>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <h3>Tracked Opportunities (${rows.length})</h3>
+      ${rows.length ? `
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Company & Role</th>
+                <th>Status</th>
+                <th>Notes</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.map(a => `
+                <tr>
+                  <td>
+                    <strong>${esc(a.company)}</strong>
+                    <div style="color:var(--muted); font-size:12.5px;">${esc(a.role)}</div>
+                    ${a.url ? `<a href="${esc(a.url)}" target="_blank" style="font-size:12px; color:var(--blue);">Link ↗</a>` : ''}
+                  </td>
+                  <td>
+                    <select id="status-${a.id}" style="padding:6px; border:1px solid #cbd5e1; border-radius:6px;">
+                      ${['Saved','Preparing','Applied','Assessment','Interview','Offer','Rejected','Withdrawn'].map(s => `<option ${a.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+                    </select>
+                  </td>
+                  <td style="font-size:12.5px;">${esc(a.notes || '—')}</td>
+                  <td>
+                    <div class="actions">
+                      <button class="secondary small" onclick="updateAppStatus(${a.id})">Save Status</button>
+                      <button class="danger small" onclick="deleteApplication(${a.id})">Delete</button>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      ` : '<div style="text-align:center; padding:30px; color:var(--muted);">No applications logged yet. Track one from Opportunity Discovery or add manually above.</div>'}
+    </div>
+  `;
+}
+
+async function addApplication() {
+  try {
+    await api('/api/applications', {
+      method: 'POST',
+      body: JSON.stringify({
+        company: val('appCompany'),
+        role: val('appRole'),
+        url: val('appUrl'),
+        status: val('appStatus'),
+        notes: val('appNotes')
+      })
+    });
+    toast('Application added.');
+    renderApplications(document.getElementById('content'));
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+async function updateAppStatus(id) {
+  try {
+    let s = val('status-' + id);
+    let all = (await api('/api/applications')).applications;
+    let item = all.find(x => x.id === id);
+    await api('/api/applications/' + id, {
+      method: 'PUT',
+      body: JSON.stringify({ ...item, status: s })
+    });
+    toast('Status updated to ' + s);
+    renderApplications(document.getElementById('content'));
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+async function deleteApplication(id) {
+  try {
+    await api('/api/applications/' + id, { method: 'DELETE' });
+    toast('Application deleted.');
+    renderApplications(document.getElementById('content'));
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+/* ================= 10. INTERVIEW STUDIO (STAR METHOD) ================= */
+async function renderInterview(c) {
+  let qData = await api('/api/interview/questions');
+  let hData = await api('/api/interview/history');
+
+  c.innerHTML = `
+    <div class="page-title">
+      <div>
+        <h1>Interview Studio (STAR Rubric)</h1>
+        <p>Practice technical role questions evaluated across Situation, Personal Action, Measurable Result, and Technical Depth.</p>
+      </div>
+      <span class="pill">${esc(qData.role)}</span>
+    </div>
+
+    <div class="grid two">
+      <div class="card">
+        <h3>Interview Practice Round</h3>
+        <div class="field">
+          <label>Target role</label>
+          <select id="iRole" onchange="loadInterviewQuestions()">
+            ${roles.map(r => `<option ${r.name === qData.role ? 'selected' : ''}>${esc(r.name)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field">
+          <label>Question selection</label>
+          <select id="iQuestion" onchange="updateQuestionBox()">
+            ${qData.questions.map((q, idx) => `<option value="${idx}">${esc(q)}</option>`).join('')}
+          </select>
+        </div>
+
+        <div id="questionBox" style="background:#f8fafc; border:1px solid var(--line); border-radius:10px; padding:14px; margin:12px 0; font-weight:600; color:#1e293b;">
+          ${esc(qData.questions[0])}
+        </div>
+
+        <div class="field">
+          <label>Your Response (Structure using Situation, Action, Result)</label>
+          <textarea id="iAnswer" style="min-height:170px;" placeholder="Describe the project situation, what you personally built or decided ('I designed...', 'I implemented...'), and the measured outcome..."></textarea>
+        </div>
+        <button style="width:100%;" onclick="submitInterviewAnswer()">Evaluate Answer with Multi-Dimensional Rubric</button>
+        <div id="interviewResultBox" style="margin-top:16px;"></div>
+      </div>
+
+      <div class="card">
+        <h3>STAR Evaluation Framework</h3>
+        <div style="display:grid; gap:12px;">
+          <div style="display:flex; gap:10px;">
+            <div class="avatar" style="background:#eff6ff; color:#1e40af;">S</div>
+            <div>
+              <strong>Situation & Context (25%)</strong>
+              <div style="font-size:12.5px; color:var(--muted);">Set the engineering scenario, scope, and problem.</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <div class="avatar" style="background:#ecfdf5; color:#065f46;">A</div>
+            <div>
+              <strong>Personal Action Verbs (25%)</strong>
+              <div style="font-size:12.5px; color:var(--muted);">Explicit first-person actions ("I built...", "I refactored...").</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <div class="avatar" style="background:#fffbeb; color:#92400e;">R</div>
+            <div>
+              <strong>Quantified Results (25%)</strong>
+              <div style="font-size:12.5px; color:var(--muted);">Measured metric improvements, test coverage, or latency.</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <div class="avatar" style="background:#f5f3ff; color:#5b21b6;">T</div>
+            <div>
+              <strong>Technical Depth (25%)</strong>
+              <div style="font-size:12.5px; color:var(--muted);">Domain terminology, protocols, libraries, and design tradeoffs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <h3>Recent Practice Sessions (${hData.results.length})</h3>
+      ${hData.results.length ? hData.results.map(r => `
+        <div style="padding:12px 0; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <strong>${esc(r.role)}: ${esc(r.question)}</strong>
+            <div style="font-size:12px; color:var(--muted); margin-top:2px;">${esc(r.feedback)}</div>
+          </div>
+          <div style="font-size:22px; font-weight:850; color:${r.score >= 75 ? 'var(--blue)' : r.score >= 50 ? 'var(--amber)' : 'var(--red)'};">
+            ${r.score}<span style="font-size:13px; color:var(--muted);"> / 100</span>
+          </div>
+        </div>
+      `).join('') : '<div style="text-align:center; padding:30px; color:var(--muted);">No practice rounds yet. Complete one above to earn an Interview-Passed tier in your Skills Passport!</div>'}
+    </div>
+  `;
+}
+
+function updateQuestionBox() {
+  let sel = document.getElementById('iQuestion');
+  let qText = sel.options[sel.selectedIndex].text;
+  document.getElementById('questionBox').textContent = qText;
+}
+
+async function loadInterviewQuestions() {
+  let role = val('iRole');
+  let d = await api('/api/interview/questions?role=' + encodeURIComponent(role));
+  let sel = document.getElementById('iQuestion');
+  sel.innerHTML = d.questions.map((q, idx) => `<option value="${idx}">${esc(q)}</option>`).join('');
+  document.getElementById('questionBox').textContent = d.questions[0];
+}
+
+async function submitInterviewAnswer() {
+  let role = val('iRole');
+  let qSel = document.getElementById('iQuestion');
+  let qText = qSel.options[qSel.selectedIndex].text;
+  let ans = val('iAnswer');
+  if (!ans.trim()) return toast('Please write an answer first.');
+
+  let resBox = document.getElementById('interviewResultBox');
+  resBox.innerHTML = '<div style="color:var(--muted);">Scoring against 4-dimensional rubric...</div>';
+
+  try {
+    let d = await api('/api/interview/answer', {
+      method: 'POST',
+      body: JSON.stringify({ role, question: qText, answer: ans })
+    });
+
+    let s = d.star_breakdown;
+    resBox.innerHTML = `
+      <div style="background:#f8fafc; border:1px solid var(--line); border-radius:12px; padding:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-size:12px; color:var(--muted); font-weight:700;">TOTAL RUBRIC SCORE</div>
+            <div style="font-size:32px; font-weight:900; color:var(--blue);">${d.score} / 100</div>
+          </div>
+          <span class="pill ${d.score >= 75 ? 'green' : d.score >= 50 ? 'amber' : 'muted'}">
+            ${d.score >= 75 ? 'Strong Structure' : d.score >= 50 ? 'Developing' : 'Needs Detail'}
+          </span>
+        </div>
+
+        <div class="grid two-equal" style="margin:12px 0;">
+          <div>Situation Context: <strong>${s.situation} / 25</strong></div>
+          <div>Personal Action Verbs: <strong>${s.action} / 25</strong></div>
+          <div>Quantified Results: <strong>${s.result} / 25</strong></div>
+          <div>Technical Depth: <strong>${s.technical_depth} / 25</strong></div>
+        </div>
+
+        <p style="font-size:13px; color:#334155; margin-bottom:0;">${esc(d.feedback)}</p>
+      </div>
+    `;
+    toast('Answer evaluated and saved to your Skills Passport evidence.');
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+/* ================= 11. PRIVACY & SECURITY ================= */
+async function renderPrivacy(c) {
+  c.innerHTML = `
+    <div class="page-title">
+      <div>
+        <h1>Privacy Controls & Security</h1>
+        <p>Full control over your data: export all account records, redact resume PII, or permanently delete data.</p>
+      </div>
+    </div>
+
+    <div class="grid two">
+      <div class="card">
+        <h3>Export All Account Data (JSON)</h3>
+        <p style="color:var(--muted); font-size:13px;">Download a complete machine-readable copy of your profile, projects, applications, interview answers, and roadmap.</p>
+        <button onclick="downloadDataExport()">📥 Download Full Data Export</button>
+      </div>
+
+      <div class="card">
+        <h3>Resume PII Redaction</h3>
+        <p style="color:var(--muted); font-size:13px;">Automatically sanitize phone numbers and email addresses from the stored resume text while keeping technical skills intact.</p>
+        <button class="secondary" onclick="anonymizeResume()">🛡️ Redact PII from Stored Resume</button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px; border-color:#fecaca;">
+      <h3 style="color:#b91c1c;">Danger Zone: Permanent Account Deletion</h3>
+      <p style="color:var(--muted); font-size:13px;">Permanently delete your account, session tokens, projects, applications, and interview records. This action cannot be undone.</p>
+      <button class="danger" onclick="confirmDeleteAccount()">🗑️ Permanently Delete My Account & Data</button>
+    </div>
+  `;
+}
+
+async function downloadDataExport() {
+  try {
+    let d = await api('/api/privacy/export');
+    let blob = new Blob([JSON.stringify(d, null, 2)], { type: 'application/json' });
+    let url = URL.createObjectURL(blob);
+    let a = document.createElement('a');
+    a.href = url;
+    a.download = `careeriq_export_${user.user_id}.json`;
+    a.click();
+    toast('Data export downloaded.');
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+async function anonymizeResume() {
+  try {
+    let d = await api('/api/privacy/anonymize', { method: 'POST' });
+    toast(d.message);
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+async function confirmDeleteAccount() {
+  if (confirm("Are you sure you want to permanently delete your account and all data? This cannot be undone.")) {
+    try {
+      await api('/api/privacy/account', { method: 'DELETE' });
+      alert("Account deleted.");
+      logout();
+    } catch (e) {
+      toast(e.message);
+    }
+  }
+}
+</script>
+</body>
+</html>
